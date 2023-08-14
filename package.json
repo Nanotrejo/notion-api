@@ -1,0 +1,39 @@
+{
+	"name": "notion-api",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node src/index.js",
+		"dev": "nodemon src/index.ts",
+		"build": "tsc -p ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Nanotrejo/notion-api.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Nanotrejo/notion-api/issues"
+	},
+	"homepage": "https://github.com/Nanotrejo/notion-api#readme",
+	"dependencies": {
+		"@notionhq/client": "^2.2.10",
+		"@types/cors": "^2.8.13",
+		"@types/express": "^4.17.17",
+		"@types/node": "^20.4.6",
+		"body-parser": "^1.20.2",
+		"cors": "^2.8.5",
+		"cross-env": "^7.0.3",
+		"dotenv": "^16.3.1",
+		"express": "^4.18.2",
+		"node": "^20.5.0",
+		"ts-node": "^10.9.1",
+		"tslint": "^6.1.3",
+		"typescript": "^5.1.6"
+	},
+	"devDependencies": {
+		"nodemon": "^3.0.1"
+	}
+}
