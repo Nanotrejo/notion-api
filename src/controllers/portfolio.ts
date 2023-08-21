@@ -12,7 +12,13 @@ const getProject = async (req: Request, res: Response) => {
 	return res.json(results);
 };
 
+const getExperience = async (req: Request, res: Response) => {
+	const results = await notion.getExperience();
+	return res.json(results);
+};
+
 module.exports = {
 	getStack,
-	getProject
+	getProject,
+	getExperience
 };

@@ -4,6 +4,7 @@ let client: Client;
 const databaseId = process.env.DATABASE || "";
 const databaseIdStack = process.env.DATABASE_STACK || "";
 const databaseIdProject = process.env.DATABASE_PROJECT || "";
+const databaseIdExperience = process.env.DATABASE_EXPERIENCE || "";
 
 client = new Client({
 	auth: process.env.NOTION_TOKEN,
@@ -18,9 +19,9 @@ const getStack = async () => {
 			const { properties } = page;
 			const { name, img } = properties;
 			return {
-				id: name?.id ?? '',
-				name: name?.title[0]?.plain_text ?? '',
-				img: img?.files[0]?.file?.url ?? '',
+				id: name?.id ?? "",
+				name: name?.title[0]?.plain_text ?? "",
+				img: img?.files[0]?.file?.url ?? "",
 			};
 		});
 	} catch (err) {
@@ -37,21 +38,46 @@ const getProject = async () => {
 			const { properties } = page;
 			const { name, img, description, subtitle, drive, github, web, stack } = properties;
 			return {
-				id: name?.id ?? '',
-				name: name?.title[0]?.plain_text ?? '',
-				img: img?.files[0]?.file?.url ?? '',
-				description: description?.rich_text[0]?.plain_text ?? '',
-				subtitle: subtitle?.rich_text[0]?.plain_text ?? '',
-				drive: drive?.url ?? '',
-				github: github?.url ?? '',
-				web: web?.url ?? '',
+				id: name?.id ?? "",
+				name: name?.title[0]?.plain_text ?? "",
+				img: img?.files[0]?.file?.url ?? "",
+				description: description?.rich_text[0]?.plain_text ?? "",
+				subtitle: subtitle?.rich_text[0]?.plain_text ?? "",
+				drive: drive?.url ?? "",
+				github: github?.url ?? "",
+				web: web?.url ?? "",
 				stack: stack?.multi_select.map((item: any) => item.name) ?? [],
 			};
 		});
 	} catch (err) {
 		return false;
 	}
-}
+};
+const getExperience = async () => {
+	try {
+		const { results } = await client.databases.query({
+			database_id: databaseIdExperience,
+		});
+		return results?.map((page: any) => {
+			const { properties } = page;
+			const { title, subtitle, url, date, date_end, stack, img, type, position } = properties;
+			return {
+				id: title?.id ?? "",
+				title: title?.title[0]?.plain_text ?? "",
+				subtitle: subtitle?.rich_text[0]?.plain_text ?? "",
+				url: url?.url ?? "",
+				date: date?.date?.start ?? "",
+				date_end: date_end?.date?.start ?? "",
+				stack: stack?.multi_select.map((item: any) => item.name) ?? [],
+				img: img?.files[0]?.file?.url ?? "",
+				type: type?.select?.name ?? "",
+				position: position?.select?.name ?? "",
+			};
+		});
+	} catch (err) {
+		return false;
+	}
+};
 const getDatabase = async (auth: string, database: string) => {
 	try {
 		auth = auth ?? process.env.NOTION_TOKEN;
@@ -76,4 +102,4 @@ const getFoodOptions = async () => {
 	}
 };
 
-module.exports = { getDatabase, getFoodOptions, getStack, getProject };
+module.exports = { getDatabase, getFoodOptions, getStack, getProject, getExperience };
