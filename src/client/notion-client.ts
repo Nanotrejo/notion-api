@@ -5,6 +5,7 @@ const databaseId = process.env.DATABASE || "";
 const databaseIdStack = process.env.DATABASE_STACK || "";
 const databaseIdProject = process.env.DATABASE_PROJECT || "";
 const databaseIdExperience = process.env.DATABASE_EXPERIENCE || "";
+const databaseIdCheatsheet = process.env.DATABASE_CHEATSHEET || "";
 
 client = new Client({
 	auth: process.env.NOTION_TOKEN,
@@ -102,4 +103,53 @@ const getFoodOptions = async () => {
 	}
 };
 
-module.exports = { getDatabase, getFoodOptions, getStack, getProject, getExperience };
+const getCheatsheet = async () => {
+	try {
+		const { results } = await client.databases.query({
+			database_id: databaseIdCheatsheet,
+		});
+		return results?.map((page: any) => {
+			const { properties } = page;
+			const { title, description, img, author, url, markdown,date } = properties;
+			return {
+				id: title?.title[0]?.plain_text?.replaceAll(' ', '_') ?? "",
+				title: title?.title[0]?.plain_text ?? "",
+				description: description?.rich_text[0]?.plain_text ?? "",
+				img: img?.files[0]?.file?.url ?? "",
+				author: author?.rich_text[0]?.plain_text ?? "",
+				url: url?.url ?? "",
+				markdown: markdown?.rich_text[0]?.plain_text ?? "",
+				date: date?.date?.start ?? ""
+			};
+		});
+	} catch (err) {
+		return false;
+	}
+};
+
+const getCheatsheetById = async (id: string | any) => {
+	try {
+		if(!id) return false;
+		const { results } = await client.databases.query({
+			database_id: databaseIdCheatsheet,
+		});
+		return results.filter((f: any) => f?.properties?.title?.title[0]?.plain_text === id?.replaceAll('_', ' '))?.map((page: any) => {
+			const { properties } = page;
+			const { title, description, img, author, url, markdown,date } = properties;
+			return {
+				id: title?.title[0]?.plain_text?.replaceAll(' ', '_') ?? "",
+				title: title?.title[0]?.plain_text ?? "",
+				description: description?.rich_text[0]?.plain_text ?? "",
+				img: img?.files[0]?.file?.url ?? "",
+				author: author?.rich_text[0]?.plain_text ?? "",
+				url: url?.url ?? "",
+				markdown: markdown?.rich_text.map((m: any) => m?.plain_text).join('') ?? "",
+				date: date?.date?.start ?? ""
+			};
+		})[0];
+	} catch (err) {
+		return false;
+	}
+};
+
+module.exports = { getDatabase, getFoodOptions, getStack, getProject, getExperience, getCheatsheet, getCheatsheetById };

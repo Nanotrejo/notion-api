@@ -17,8 +17,21 @@ const getExperience = async (req: Request, res: Response) => {
 	return res.json(results);
 };
 
+const getCheatsheet = async (req: Request, res: Response) => {
+	const results = await notion.getCheatsheet();
+	return res.json(results);
+};
+
+const getCheatsheetById = async (req: Request, res: Response) => {
+	const { id } = req.headers;
+	const results = await notion.getCheatsheetById(id);
+	return res.json(results);
+};
+
 module.exports = {
 	getStack,
 	getProject,
-	getExperience
+	getExperience,
+	getCheatsheet,
+	getCheatsheetById,
 };
