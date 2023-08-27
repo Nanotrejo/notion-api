@@ -4,9 +4,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "nodemon src/index.ts",
-		"dev": "nodemon src/index.ts"
-		},
+		"start": "node src/index.js",
+		"dev": "nodemon src/index.ts",
+		"build": "tsc -p . && node dist/index.js"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Nanotrejo/notion-api.git"
