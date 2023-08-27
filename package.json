@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "node src/index.js",
 		"dev": "nodemon src/index.ts",
-		"build": "tsc -p . && node dist/index.js"
+		"build": "npm install && tsc -p . && node dist/index.js"
 	},
 	"repository": {
 		"type": "git",
