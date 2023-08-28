@@ -10,6 +10,7 @@ export class Server {
 		this.app = express();
 		this.hello(port);
 		this.settings();
+		this.accept();
 		this.routes();
 	}
 	private hello(port: number): void {
@@ -28,5 +29,26 @@ export class Server {
 
 	private routes() {
 		this.app.use(require("./routes/routes"));
+	}
+
+	private accept() {
+		this.app.use(cors({
+			origin: (origin, callback) => {
+			  const ACCEPTED_ORIGINS = [
+				'http://localhost:4200',
+				'https://nanotrejo.es'
+			  ]
+		  
+			  if (ACCEPTED_ORIGINS.includes(origin ?? '')) {
+				return callback(null, true)
+			  }
+		  
+			  if (!origin) {
+				return callback(null, true)
+			  }
+		  
+			  return callback(new Error('Not allowed by CORS'))
+			}
+		  }))
 	}
 }
