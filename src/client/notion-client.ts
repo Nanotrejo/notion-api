@@ -29,8 +29,6 @@ async function fetchMarkdownForPage(pageId: string) {
 
 	try {
 		const mdBlocks = await n2m.pageToMarkdown(pageId);
-
-		// first, convert notion-to-md result to a plain string (robust coercion)
 		const mdResult = n2m.toMarkdownString(mdBlocks);
 		let mdString = "";
 		if (typeof mdResult === "string") {
@@ -42,48 +40,6 @@ async function fetchMarkdownForPage(pageId: string) {
 			mdString = vals.join('\n');
 		} else {
 			mdString = JSON.stringify(mdResult ?? "");
-		}
-
-		// build safe preview cards for bookmark/embed blocks and append to the markdown
-		try {
-			const cards: string[] = [];
-			for (const _b of mdBlocks) {
-				const b: any = _b;
-				const bookmark = b.bookmark ?? b.block?.bookmark ?? null;
-				if (bookmark) {
-					const url = bookmark?.url ?? b.url ?? null;
-					const meta = bookmark?.meta ?? bookmark?.og ?? null;
-					const title = meta?.title ?? meta?.site_name ?? '';
-					const desc = meta?.description ?? '';
-					const thumb = meta?.thumbnail ?? meta?.image ?? '';
-					let card = `> [${title || url}](${url})`;
-					if (desc) card += `\n> \n> ${desc}`;
-					if (thumb) card += `\n> \n> ![](${thumb})`;
-					cards.push(card);
-					continue;
-				}
-
-				const embed = b.embed ?? b.block?.embed ?? null;
-				if (embed) {
-					const src = embed?.url ?? b.url ?? null;
-					if (src) {
-						const yt = String(src).match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
-						if (yt && yt[1]) {
-							const id = yt[1];
-							// add a small iframe card; frontend should sanitize or strip HTML if needed
-							cards.push(`<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen loading="lazy"></iframe>`);
-						} else {
-							cards.push(`> [Embedded content](${src})`);
-						}
-					}
-				}
-			}
-
-			if (cards.length) {
-				mdString = mdString.trim() + '\n\n' + cards.join('\n\n');
-			}
-	} catch (e) {
-			// ignore preview building errors
 		}
 
 		mdCache.set(pageId, { value: mdString, ts: now });
@@ -115,8 +71,6 @@ async function mapWithConcurrency<T, R>(items: T[], mapper: (t: T) => Promise<R>
 	await Promise.all(workers);
 	return results;
 }
-
-// renderMdBlocks removed - previews built inline in fetchMarkdownForPage
 
 const getStack = async () => {
 	try {
