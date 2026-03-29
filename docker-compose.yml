@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nanotrejo/notion-api:latest
     container_name: notion-api
     restart: unless-stopped
     environment:
